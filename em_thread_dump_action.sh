@@ -1,0 +1,48 @@
+#!/bin/bash
+
+#
+# take $THREAD_DUMP_REPEAT thread dumps on MOM and each collector, $THREAD_DUMP_INTERVAL seconds apart
+#
+
+source ./environment.properties
+
+echo $@ >> $EM_PATH/logs/$THREAD_DUMP_ACTION_LOG
+
+for i { 1..$THREAD_DUMP_REPEAT }
+do
+    if [ -x "./$THREAD_DUMP_SCRIPT" ]; then
+        ./$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR1_HOST" && "$COLLECTOR1_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR1_HOST $COLLECTOR1_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR2_HOST" && "$COLLECTOR2_PATH" ]; then
+    ssh $SSH_USER@$COLLECTOR2_HOST $COLLECTOR2_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR3_HOST" && "$COLLECTOR3_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR3_HOST $COLLECTOR3_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR4_HOST" && "$COLLECTOR4_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR4_HOST $COLLECTOR4_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR5_HOST" && "$COLLECTOR5_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR5_HOST $COLLECTOR5_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR6_HOST" && "$COLLECTOR6_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR6_HOST $COLLECTOR6_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR7_HOST" && "$COLLECTOR7_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR7_HOST $COLLECTOR7_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR8_HOST" && "$COLLECTOR8_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR8_HOST $COLLECTOR8_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR9_HOST" && "$COLLECTOR9_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR9_HOST $COLLECTOR9_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+    if [ "$COLLECTOR10_HOST" && "$COLLECTOR10_PATH" ]; then
+        ssh $SSH_USER@$COLLECTOR10_HOST $COLLECTOR10_PATH/bin/$THREAD_DUMP_SCRIPT
+    fi
+
+    sleep $THREAD_DUMP_INTERVAL
+done
