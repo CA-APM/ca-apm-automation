@@ -1,65 +1,42 @@
-# Field Pack Name
-*__NOTE TO CONTRIBUTORS:__ Items marked in italics provide how-to guidance in creating this file.  These comments should be removed once proper content has been added.  Other non-italicized text should remain in this file as boilerplate text.*
-
-
-*__NOTE TO CONTRIBUTORS:__ Projects are designed to be self documenting in this README file.  Rich text (including screenshots) can be  found inside the projects themselves (as committed assets).  Generally a project overview (including description, sample screenshots, etc.) can be found on the project wiki page at `http://github.com/ca-apm/<repo_name>/wiki`.*
+# APM Automation
 
 # Description
-*Provide a short description of the extension here. See [Markdown Basics](https://help.github.com/articles/markdown-basics/) for markdown syntax.*
+Scripts to automate recurring APM tasks.
 
 ## Short Description
-
-*A description of less that 140 characters long, required for APM Marketplace*
+Scripts to automate recurring APM tasks.
 
 ## APM version
-*APM EM and agent versions the extension has been tested with.*
+CA APM 10.5
 
 ## Supported third party versions
-*Third party versions tested with.*
-
+n/a
 ## Limitations
 *What the extension will not do.*
 
 ## License
-*Link to the license under which this extension is provided. See [Licensing](https://communities.ca.com/docs/DOC-231150910#license) on the CA APM Developer Community.*
-
-Please review the
-**LICENSE**
-file in this repository.  Licenses may vary by repository.  Your download and use of this software constitutes your agreement to this license.
+[Apache License 2.0](LICENSE)
 
 # Installation Instructions
-*How to install the extension.*
 
 ## Prerequisites
-*What has to be done before installing the extension.*
+These scripts run on Linux.
 
 ## Dependencies
-*APM and third party dependencies. E.g. APM agent 9.1+, SOA (web services) extension 9.1+*
+n/a
 
 ## Installation
-*How to install the extension.*
+Extract archive to bin directory of CA APM Enterprise Manager installation.
 
 ## Configuration
-*How to configure the extension.*
+Edit environment.properties.
 
 
 # Usage Instructions
-*How to use the extension.*
-
-## Metric description
-*Describe the metrics provided by this extension or link to third party documentation.*
-
-## Custom Management Modules
-*Dashboards, etc. included with this extension.*
-
-## Custom type viewers
-*Type viewers included with this extension. Include agent and metric path that the type viewer matches against.*
-
-## Name Formatter Replacements
-*If the extension includes name formatters cite all place holders here and what they are replaced with.*
+See comments in the scripts.
 
 ## Debugging and Troubleshooting
-*How to debug and troubleshoot the extension.*
+Check log files.
 
 
 ## Support
@@ -70,19 +47,7 @@ Although these utilities are unsupported, please let us know if you have any pro
 Unless explicitly stated otherwise this extension is only supported on the same platforms as the APM core agent. See [APM Compatibility Guide](http://www.ca.com/us/support/ca-support-online/product-content/status/compatibility-matrix/application-performance-management-compatibility-guide.aspx).
 
 ### Support URL
-*Mandatory for the APM marketplace*
-
-*if officially supported*
-
-https://support.ca.com
-
-*if community supported add a link to the github.com issue tracker eg*
-
-https://github.com/CA-APM/ca-apm-fieldpack-epa-aix/issues
-
-*if closed source, not supported, then create an empty github.com repository, and link github issue tracker as a courtesy*
-
-https://github.com/CA-APM/ca-apm-fieldpack-epa-aix/issues
+https://github.com/CA-APM/ca-apm-automation
 
 # Contributing
 The [CA APM Community](https://communities.ca.com/community/ca-apm) is the primary means of interfacing with other users and with the CA APM product team.  The [developer subcommunity](https://communities.ca.com/community/ca-apm/ca-developer-apm) is where you can learn more about building APM-based assets, find code examples, and ask questions of other developers and the CA APM product team.
@@ -91,9 +56,7 @@ If you wish to contribute to this or any other project, please refer to [easy in
 
 ## Categories
 
-*Delete this line, and delete all that do not apply from the below list.  Mandatory for APM Marketplace.*
-
-Cloud Integration Middleware/ESB Mobile .NET Big Data Browser Database DevOps Examples Frameworks Packaged Applications Portal Reporting Server Monitoring Virtualization/Containers Visualization
+Integration DevOps Examples
 
 
 # Change log
@@ -101,4 +64,4 @@ Changes for each version of the extension.
 
 Version | Author | Comment
 --------|--------|--------
-1.0 | ${env.USERNAME} | First version of the extension.
+1.0 | CA Technologies | First version of the extension.
