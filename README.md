@@ -86,6 +86,22 @@ The script `thread_dump.sh` will take a single thread dump from the process with
 
 The script assumes all log files are stored in the default directory `$EM_PATH/logs`. If they are stored in another location, e.g. `/var/log/` the script has to be changed accordingly.
 
+## Remove the 'Propagate to Team Center' Flag from Alerts
+
+Custom built CA APM Management Modules often have a lot of alerts defined for monitoring custom applications on thousands of metrics. In CA APM 10.x these alerts can mapped on to nodes (vertices) in the application map if the checkbox *Propagate to Team Center* is checked in the Management Module configuration. During an upgrade to CA APM 10.x this flag is automatically added and activated for all existing Management Modules. This can lead to a huge performance impact if you have hundred thousands of metrics mapped thousands of vertices in every 15s interval.
+
+Therefore this script deactivates the 'Propagate to Team Center' flag in Management Modules. We suggest you run the following script on all of your custom metrics during an upgrade.
+
+* Stop your Enterprise Manager.
+* Copy `stopPropagateToAppMap.sh` to a temporary directory.
+* Copy all the custom Management Modules (*.jar files) for which you want to deactivate 'Propagate to Team Center' from `<EM_HOME>/config/modules` to a temporary directory.
+* Backup all those custom Management Modules.
+* Run `./stopPropagateToAppMap.sh`
+* The script will create a copy of all Management Modules in the `new` subdirectory.
+* Copy the new Management Module files from the `new` directory back to `<EM_HOME>/config/modules`
+* Start the Enterprise Manager.
+* Check `<EM_HOME>/log/IntroscopeEnterpriseManager.properties`
+
 ## Debugging and Troubleshooting
 Check the log file written by the individual scripts.
 
