@@ -16,12 +16,22 @@ declare -i killcount
 dotcount=0
 minutecount=0
 
-echo -n "Starting check.perflog.txt at " >> $CHECK_PERFLOG_LOG
+echo -n "Starting check_perflog.sh at " >> $CHECK_PERFLOG_LOG
 date >> $CHECK_PERFLOG_LOG
+
+PERFLOG="$EM_PATH/logs/perflog.txt"
+
+if [ ! -f "$PERFLOG" ]
+then
+    echo "ERROR: file $PERFLOG not found, exiting ..."
+    exit 1
+fi
+
 while true
 do
         current_time=`date +%s`
-        perflog_update_time=`date -r perflog.txt +%s`
+        perflog_update_time=`date -r "${PERFLOG}" +%s`
+        # echo "perflog.txt last updated at $perflog_update_time" >> $CHECK_PERFLOG_LOG
         seconds_since_perflog_updated=$current_time-$perflog_update_time
         if [ "$seconds_since_perflog_updated" -gt 18 ]
         then
@@ -31,7 +41,7 @@ do
 
                 if [ -f "$EM_PATH/em.pid" ]
                 then
-                    for i { 1..$THREAD_DUMP_REPEAT }
+                    for i in { 1..$THREAD_DUMP_REPEAT }
                     do
                         ./$THREAD_DUMP_SCRIPT
                         sleep $THREAD_DUMP_INTERVAL
