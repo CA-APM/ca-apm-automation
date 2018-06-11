@@ -29,7 +29,7 @@ then
     exit 1
 fi
 
-if [ -z "${JAVA_HOME}" ]
+if [ -z "${JAVA_HOME}" ] || [ ! -x "${JAVA_HOME}/bin/jar" ]
 then
     echo "ERROR: \$JAVA_HOME is not set. Please 'export \$JAVA_HOME=<path to java>'."
     exit 1
@@ -65,7 +65,7 @@ echo "Management Module,Alert,Caution,Danger" > ${CSV}
 for filename in $FILES
 do
     echo "Opening $filename"
-    ${JAVA_HOME}/bin/jar -xf ${filename} ManagementModule.xml
+    "${JAVA_HOME}/bin/jar" -xf "${filename}" ManagementModule.xml
     mm_name=""
     danger=0
     caution=0
