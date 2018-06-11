@@ -102,6 +102,21 @@ Therefore this script deactivates the 'Propagate to Team Center' flag in Managem
 * Start the Enterprise Manager.
 * Check `<EM_HOME>/log/IntroscopeEnterpriseManager.properties`
 
+## Check Alert Periods in Management Modules
+
+In APM 10.7 SP1 a new property `introscope.enterprisemanager.alerts.maxPeriods` with a default value of 20 was introduced to reduce memory consumption. If a custom Management Modules has alerts with caution or danger "Periods Over Threshold" with "Observed Periods" greater than the value of the property `introscope.enterprisemanager.alerts.maxPeriods`, e.g. 20 out of 40, the loading of that Management Module will fail with an error message indicating the problem.
+
+The script `check_mm.sh` checks all Management Modules in your APM installation whether they exceed that treshold. To run that script:
+
+1. Set `EM_PATH` in `environment.properties` to point to your APM installation
+2. Make sure the environment variable `JAVA_HOME` is set and the `jar` executable is available
+3. Run `./check_mm.sh`.
+4. The script will print what it is doing:
+  1. check all Management Modules in `EM_PATH`
+  2. print the maximum alert period duration encountered and
+  3. write all alerts that exceed `introscope.enterprisemanager.alerts.maxPeriods` to `checkmm.csv`.
+
+
 ## Debugging and Troubleshooting
 Check the log file written by the individual scripts.
 
