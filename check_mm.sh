@@ -139,7 +139,7 @@ if [[ $max_period -gt $config_period ]]
 then
     echo "maximum alert period in all MMs = $max_period > introscope.enterprisemanager.alerts.maxPeriods = $config_period"
 else
-    echo "no alert found with alert period > introscope.enterprisemanager.alerts.maxPeriods = $config_period"
+    echo "no alert found with alert period > introscope.enterprisemanager.alerts.maxPeriods = $max_period"
 fi
 echo
 
