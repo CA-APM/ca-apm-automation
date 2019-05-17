@@ -10,6 +10,21 @@ source ./environment.properties
 
 PWD=`pwd`
 CSV="${PWD}/checkmm.csv"
+print_all=0
+
+while getopts ":ha" opt; do
+  case ${opt} in
+    h ) echo "Usage: $0 [-a]"
+      exit 1
+      ;;
+    a ) print_all=1
+      echo "printing all alerts to file $CSV"
+      ;;
+    \? ) echo "Usage: $0 [-a]"
+      exit 1
+      ;;
+  esac
+done
 
 TMP_DIR=/tmp/checkmm
 echo "Using $TMP_DIR to extract management modules, writing output to $CSV"
@@ -60,15 +75,15 @@ else
 fi
 
 # print csv header
-echo "Management Module,Alert,Caution,Danger" > ${CSV}
+echo "Management Module,Alert,CautionPeriod,DangerPeriod,CautionValue,DangerValue" > ${CSV}
 
 for filename in $FILES
 do
     echo "Opening $filename"
     "${JAVA_HOME}/bin/jar" -xf "${filename}" ManagementModule.xml
     mm_name=""
-    danger=0
-    caution=0
+    dangerPeriod=0
+    cautionPeriod=0
     alert="no"
 
     while read p; do
@@ -87,25 +102,31 @@ do
         #[[ $alert = "yes" ]] -a [[ $p =~ \<CautionMinNumPerPeriod\>(.*)\</CautionMinNumPerPeriod\> ]] && caution_min="${BASH_REMATCH[1]}"
 
         # find caution period
-        [[ $alert = "yes" ]] && [[ $p =~ \<CautionAlertPeriod\>(.*)\</CautionAlertPeriod\> ]] && caution="${BASH_REMATCH[1]}"
+        [[ $alert = "yes" ]] && [[ $p =~ \<CautionAlertPeriod\>(.*)\</CautionAlertPeriod\> ]] && cautionPeriod="${BASH_REMATCH[1]}"
 
         # find danger min period
         #[[ $alert = "yes" ]] -a [[ $p =~ \<DangerMinNumPerPeriod\>(.*)\</DangerMinNumPerPeriod\> ]] && danger_min="${BASH_REMATCH[1]}"
 
         # find danger period
-        [[ $alert = "yes" ]] && [[ $p =~ \<DangerAlertPeriod\>(.*)\</DangerAlertPeriod\> ]] && danger="${BASH_REMATCH[1]}"
+        [[ $alert = "yes" ]] && [[ $p =~ \<DangerAlertPeriod\>(.*)\</DangerAlertPeriod\> ]] && dangerPeriod="${BASH_REMATCH[1]}"
+
+        # find danger period
+        [[ $alert = "yes" ]] && [[ $p =~ \<CautionTargetValue\>(.*)\</CautionTargetValue\> ]] && cautionValue="${BASH_REMATCH[1]}"
+
+        # find danger period
+        [[ $alert = "yes" ]] && [[ $p =~ \<DangerTargetValue\>(.*)\</DangerTargetValue\> ]] && dangerValue="${BASH_REMATCH[1]}"
 
         # find end of alert definition
         if [[ "$alert" = "yes" ]] && [[ "$p" = *"</AlertBase>"* ]]
         then
             alert="no"
-            #echo "found alert $name in MM $mm_name, caution = $caution, danger = $danger"
-            if [ $danger -gt $config_period -o $caution -gt $config_period ]
+            #echo "found alert $name in MM $mm_name, cautionPeriod = $cautionPeriod, dangerPeriod = $dangerPeriod"
+            if [ $print_all -o $dangerPeriod -gt $config_period -o $cautionPeriod -gt $config_period ]
             then
                 # update max_period and print to csv file
-                [[ $danger -gt $max_period ]] && max_period=$danger;
-                [[ $caution -gt $max_period ]] && max_period=$caution;
-                echo "$mm_name,$name,$caution,$danger" >> ${CSV}
+                [[ $dangerPeriod -gt $max_period ]] && max_period=$dangerPeriod;
+                [[ $cautionPeriod -gt $max_period ]] && max_period=$cautionPeriod;
+                echo "$mm_name,$name,$cautionPeriod,$dangerPeriod,$cautionValue,$dangerValue" >> ${CSV}
             fi
         fi
     done < ${TMP_DIR}/ManagementModule.xml

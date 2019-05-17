@@ -33,21 +33,21 @@ Extract archive to bin directory of CA APM Enterprise Manager installation. Make
 ## Configuration
 The file `environment.properties` contains all the variables that need to be changed in order to run the scripts. It should be copied to every Enterprise Manager. **Do not change the scripts themselves!**
 
-* EM_PATH: path to the *local* EM installation directory. Needs to be adapted for every Enterprise Manager. Default value: `/opt/CA/introscope`.
-* SSH_USER: this is the user that the scripts will use to connect to remote Enterprise Managers from the MOM. The scripts assume that the public key is known on the remote EMs. Run `ssh_publickey.sh` to make the public key of the current user (`~/.ssh/id_rsa.pub`) known on the remote server. Default value: `wily`
-* MOM_HOST: hostname or IP address of the MOM.
-* COLLECTOR<n>_HOST: hostname or IP address of the collector EMs. Leave empty if you don't have that many collectors in your cluster.
-* MOM_PATH: paths to EM installation directory on the MOM. Default value: `$EM_PATH`
-* COLLECTOR<n>_PATH: paths to EM installation directory on the repsective collector. Default value: `$EM_PATH`
-* THREAD_DUMP_REPEAT: how many thread dumps to take on an EM. Default value: 10
-* THREAD_DUMP_INTERVAL: pause between thread dumps in seconds. Default value: 3
-* THREAD_DUMP_FILE: name of the file name to which the thread dump is written. Default value: `thread_dump_jstack.txt`
-* THREAD_DUMP_SCRIPT: name of the script to execute to take a thread dump. Default value: `thread_dump.sh`
-* THREAD_DUMP_ACTION_LOG: log file of the thread dump action (`em_thread_dump_action.sh`). Default value: `thread_dump_action.log`
-* THREAD_DUMP_JSTACK: path to the jstack binary. Requires a Java JDK, not JRE. Default value: `$EM_PATH/jdk1.8.0_131/bin/jstack`
-* CHECK_PERFLOG_LOG: log file of the script `check_perflog.sh`. Default value: `check_perflog.log`
-* LOG_FILES: log files to collect from all EMs with `getlogs.sh`. Default value: `( "perflog.txt" "IntroscopeEnterpriseManager.log" "em.log" "$THREAD_DUMP_FILE" )`
-* LOG_TARGET_DIR: target directory where `getlogs.sh` will copy all the log files to. Default value: `$EM_PATH/logs/cluster`
+* `EM_PATH`: path to the *local* EM installation directory. Needs to be adapted for every Enterprise Manager. Default value: `/opt/CA/introscope`.
+* `SSH_USER`: this is the user that the scripts will use to connect to remote Enterprise Managers from the MOM. The scripts assume that the public key is known on the remote EMs. Run `ssh_publickey.sh` to make the public key of the current user (`~/.ssh/id_rsa.pub`) known on the remote server. Default value: `wily`
+* `MOM_HOST`: hostname or IP address of the MOM.
+* `COLLECTOR<n>_HOST`: hostname or IP address of the collector EMs. Leave empty if you don't have that many collectors in your cluster.
+* `MOM_PATH`: paths to EM installation directory on the MOM. Default value: `$EM_PATH`
+* `COLLECTOR<n>_PATH`: paths to EM installation directory on the repsective collector. Default value: `$EM_PATH`
+* `THREAD_DUMP_REPEAT`: how many thread dumps to take on an EM. Default value: 10
+* THREAD_DUMP_INTERVAL`: pause between thread dumps in seconds. Default value: 3
+* `THREAD_DUMP_FILE`: name of the file name to which the thread dump is written. Default value: `thread_dump_jstack.txt`
+* `THREAD_DUMP_SCRIPT`: name of the script to execute to take a thread dump. Default value: `thread_dump.sh`
+* `THREAD_DUMP_ACTION_LOG`: log file of the thread dump action (`em_thread_dump_action.sh`). Default value: `thread_dump_action.log`
+* `THREAD_DUMP_JSTACK`: path to the jstack binary. Requires a Java JDK, not JRE. Default value: `$EM_PATH/jdk1.8.0_131/bin/jstack`
+* `CHECK_PERFLOG_LOG`: log file of the script `check_perflog.sh`. Default value: `check_perflog.log`
+* `LOG_FILES`: log files to collect from all EMs with `getlogs.sh`. Default value: `( "perflog.txt" "IntroscopeEnterpriseManager.log" "em.log" "$THREAD_DUMP_FILE" )`
+* `LOG_TARGET_DIR`: target directory where `getlogs.sh` will copy all the log files to. Default value: `$EM_PATH/logs/cluster`
 
 
 # Usage Instructions
@@ -94,7 +94,7 @@ Therefore this script deactivates the 'Propagate to Team Center' flag in Managem
 
 * Stop your Enterprise Manager.
 * Copy `stopPropagateToAppMap.sh` to a temporary directory.
-* Copy all the custom Management Modules (*.jar files) for which you want to deactivate 'Propagate to Team Center' from `<EM_HOME>/config/modules` to a temporary directory.
+* Copy all the custom Management Modules (`*.jar` files) for which you want to deactivate 'Propagate to Team Center' from `<EM_HOME>/config/modules` to a temporary directory.
 * Backup all those custom Management Modules.
 * Run `./stopPropagateToAppMap.sh`
 * The script will create a copy of all Management Modules in the `new` subdirectory.
@@ -115,6 +115,7 @@ The script `check_mm.sh` checks all Management Modules in your APM installation 
   1. check all Management Modules in `EM_PATH`
   2. print the maximum alert period duration encountered and
   3. write all alerts that exceed `introscope.enterprisemanager.alerts.maxPeriods` to `checkmm.csv`.
+5. If you the script with the option `-a` it will write all alerts with periods and threshold values to `checkmm.csv`.
 
 
 ## Debugging and Troubleshooting
