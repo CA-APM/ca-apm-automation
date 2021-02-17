@@ -67,7 +67,7 @@ fi
 max_period=$config_period
 
 # are there MM for domains?
-if [ -z `find /Users/grogu01/work/Introscope10.7.0.45/config/modules/* -type d` ]
+if [ -z `find ${EM_PATH}/config/modules/* -type d` ]
 then
     FILES="${EM_PATH}/config/modules/*.jar"
 else
