@@ -115,7 +115,22 @@ The script `check_mm.sh` checks all Management Modules in your APM installation 
   1. check all Management Modules in `EM_PATH`
   2. print the maximum alert period duration encountered and
   3. write all alerts that exceed `introscope.enterprisemanager.alerts.maxPeriods` to `checkmm.csv`.
-5. If you the script with the option `-a` it will write all alerts with periods and threshold values to `checkmm.csv`.
+5. If you run the script with the option `-a` it will write all alerts with periods and threshold values to `checkmm.csv`.
+
+
+## Check Management Modules Dependencies
+
+Although the recommended best practice is to make Management Modules self-sufficient it is possible to re-use existing components (metric groupings, alerts, actions, dashboards) from other management modules. If you import a Management Modules with dependencies into a new APM cluster or tenant you have to import the dependency first.
+
+The script `dependency_mm.sh` checks all Management Modules in your APM installation for dependencies. To run that script:
+
+1. Set `EM_PATH` in `environment.properties` to point to your APM installation
+2. Make sure the environment variable `JAVA_HOME` is set and the `jar` executable is available
+3. Run `./dependency_mm.sh`.
+4. The script will print what it is doing:
+  1. check all Management Modules in `EM_PATH`
+  2. write all elements that depend on another Management Module to `dependencies.csv`.
+5. If you run the script with the option `-a` it will write all elements that may have dependencies to `dependencies.csv`.
 
 
 ## Debugging and Troubleshooting
