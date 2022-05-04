@@ -40,13 +40,13 @@ cd $TMP_DIR
 
 if [ ! -d "$EM_PATH" ] || [ ! -d "$EM_PATH/config/modules" ]
 then
-    echo "ERROR: cannot open directory $EM_PATH/config/modules. Make sure to change \$EM_PATH in environment.properties."
+    echo "ERROR: cannot open directory $EM_PATH/config/modules. Make sure to change EM_PATH in environment.properties."
     exit 1
 fi
 
 if [ -z "${JAVA_HOME}" ] || [ ! -x "${JAVA_HOME}/bin/jar" ]
 then
-    echo "ERROR: \$JAVA_HOME is not set. Please 'export \$JAVA_HOME=<path to java>'."
+    echo "ERROR: \$JAVA_HOME is not set. Please 'export JAVA_HOME=<path to java>'."
     exit 1
 fi
 
@@ -67,7 +67,6 @@ do
     echo "Opening $filename"
     "${JAVA_HOME}/bin/jar" -xf "${filename}" ManagementModule.xml
     mm_name=""
-    mm_name=""
     alert="no"
 
     while read p; do
@@ -75,12 +74,20 @@ do
 
         # save Management Module name
         [[ -z $mm_name ]] && [[ $p =~ \<Name\>(.*)\</Name\> ]] && mm_name="${BASH_REMATCH[1]}"
+#	&& echo "MM = '$mm_name'"
 
         # find start of alert definition
         [[ $p = *"<AlertBase "* ]] && container="Alert" && container_name=""
 
+        # find start of calculator definition
+        [[ $p = *"<Calculator "* ]] && container="Calculator" && container_name=""
+
+        # find start of report element definition
+        [[ $p = *"<ReportElement "* ]] && container="ReportElement" && container_name=""
+
         # find first container name
         [[ -n $container ]] && [[ -z $container_name ]] && [[ $p =~ \<Name.*\>(.*)\</Name\> ]] && container_name="${BASH_REMATCH[1]}"
+	# && echo "found $container $container_name"
 
         # find management module name
         [[ -n $element ]] && [[ $p =~ \<ManagementModuleName\>(.*)\</ManagementModuleName\> ]] && element_mm="${BASH_REMATCH[1]}"
@@ -97,14 +104,26 @@ do
         # find end of alert
         [[ $container = "Alert" ]] && [[ $p =~ \</AlertBase\> ]] && container=""
 
+        # find end of calculator
+        [[ $container = "Calculator" ]] && [[ $p =~ \</Calculator\> ]] && container=""
+
+        # find end of report element
+        [[ $container = "ReportElement" ]] && [[ $p =~ \</ReportElement\> ]] && container=""
+
         # find start of dashboard definition
         [[ $p = *"<Dashboard "* ]] && container="Dashboard" && container_name=""
+
+        # find action
+        [[ -n $container ]] && [[ $p =~ \<ActionID\> ]] && element="Action"
+
+        # find action
+        [[ -n $container ]] && [[ $p =~ \<SummaryAlertID\> ]] && element="Summary Alert"
 
         # find dashboard image
         [[ $container = "Dashboard" ]] && [[ $p =~ \<ImageID\> ]] && element="Image"
 
-        # find dashboard alert
-        [[ $container = "Dashboard" ]] && [[ $p =~ \<AlertID\> ]] && element="Alert"
+        # find alert
+        [[ -n $container ]] && [[ $p =~ \<AlertID\> ]] && element="Alert"
 
         # find dashboard link
         [[ $container = "Dashboard" ]] && [[ $p =~ \<DashboardID\> ]] && element="Dashboard Link"
@@ -124,6 +143,15 @@ do
         # find end of dashboard
         [[ $container = "SmartReportTemplate" ]] && [[ $p =~ \</SmartReportTemplate\> ]] && container=""
 
+
+#	if [[ -n $element_name ]]
+#	then
+#		if [[ "$mm_name" != "$element_mm" ]]
+#		then 
+#			echo "found $element ref $element_mm/'$element_name' in $container '$container_name'"
+#		fi
+#	fi
+
         # find end of dependency
         if [[ -n $container ]] && [[ -n $element ]] &&
           [[ "$p" = *"</ActionID>"* ]] || [[ "$p" = *"</ImageID>"* ]] || [[ "$p" = *"</AlertID>"* ]] ||
@@ -131,7 +159,8 @@ do
         then
             if [[ "$mm_name" != "$element_mm" ]]
             then
-              count=$((count++))
+		((++count))
+#		echo "found $element ref $element_mm/'$element_name' in $container '$container_name'"
             fi
 
             if [[ $print_all = "1" ]] || [[ "$mm_name" != "$element_mm" ]]
