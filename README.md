@@ -133,6 +133,17 @@ The script `dependency_mm.sh` checks all Management Modules in your APM installa
 5. If you run the script with the option `-a` it will write all elements that may have dependencies to `dependencies.csv`.
 
 
+## Export All Actions
+
+The script `list_actions.sh` checks all Management Modules in your APM installation for actions and generates a csv file that contains the Management Module, Alert Name, Caution Action List and Danger Action List.
+
+1. Set `EM_PATH` in `environment.properties` to point to your APM installation
+2. Run `./dependency_mm.sh`.
+3. The script will print what it is doing:
+  1. check all Management Modules in `EM_PATH`
+  2. write all actions in alerts to `alert_actions.csv`.
+
+
 ## Debugging and Troubleshooting
 Check the log file written by the individual scripts.
 
