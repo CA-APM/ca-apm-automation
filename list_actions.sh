@@ -32,15 +32,17 @@ echo "Analyzing $mm_name ($mm) ..."
 # line 6: extract action for alert with only danger alerts
 # line 7: replace action list xml with just MM/ActionName
 # line 8: truncate spaces
+# line 9: remove MM name if alert and action are from the same MM
 
 echo 'cat /ManagementModule/DataGroups/DataGroup/AlertBase' | xmllint --shell  ManagementModule.xml| \
   tr '\n' ' ' | sed 's/\-\-\-\-\-\-\-/\n/g' | \
   grep ActionID | \
   sed -E "s/^.+\<Name\>(.+)\<\/Name\>.+\<CautionActionList\>(.+)\<\/CautionActionList\>.+\<DangerActionList\>(.+)\<\/DangerActionList\>.+/$mm,$mm_name,\1,\2,\3/g" | \
   sed -E "s/^.+\<Name\>(.+)\<\/Name\>.+\<DangerActionList\>(.+)\<\/DangerActionList\>.+/$mm,$mm_name,\1,,\2/g" | \
-  sed -E "s/^.+\<Name\>(.+)\<\/Name\>.+\<CautionActionList\>(.+)\<\/CautionActionList\>.+/$mm,$mm_name,\1,\2,/g" | \
-  sed -E 's/\<ActionID\>[[:space:]]*\<ManagementModuleName\>([^\<]+)\<\/ManagementModuleName\>[[:space:]]*\<ConstructName\>([^\<]+)\<\/ConstructName\>[[:space:]]*\<\/ActionID\>/ \1\/\2/g' | \
-  sed -E 's/[[:space:]]+/ /g' \
+  sed -E "s/^.+\<Name\>(.+)\<\/Name\>.+\<CautionActionList\>(.+)\<\/CautionActionLiqst\>.+/$mm,$mm_name,\1,\2,/g" | \
+  sed -E 's/[[:space:]]*\<ActionID\>[[:space:]]*\<ManagementModuleName\>([^\<]+)\<\/ManagementModuleName\>[[:space:]]*\<ConstructName\>([^\<]+)\<\/ConstructName\>[[:space:]]*\<\/ActionID\>[[:space:]]*/\"\1\/\2\" /g' | \
+  sed -E 's/[[:space:]]+/ /g' | \
+  sed -E "s/$mm_name\///g" \
   >> alert_actions.csv
 
 rm -f ManagementModule.xml
