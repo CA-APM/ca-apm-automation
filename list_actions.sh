@@ -1,6 +1,8 @@
 #!/bin/sh
 
-source ./environment.properties
+# use environment.properties or set EM_PATH directly
+#source ./environment.properties
+EM_PATH=./tmp
 
 # are there MM for domains?
 if [ -z `find ${EM_PATH}/config/modules/* -type d` ]
@@ -12,6 +14,9 @@ fi
 
 echo "Management Module jar,Management Module Name,Alert Name,Caution Action List,Danger Action List" > alert_actions.csv
 
+echo "Examining files in $FILES:"
+ls $FILES
+echo
 for i in $FILES
 do
 
@@ -20,7 +25,7 @@ jar xvf $i ManagementModule.xml > /dev/null
 
 mm=`echo *.jar`
 # get MM name
-mm_name=`echo 'cat /ManagementModule/Name' | xmllint --shell  ManagementModule.xml | tr '\n' ' ' | sed -E 's/.+\<Name\>(.+)\<\/Name\>.+/\1/' | sed -E 's#/#\\\\/#g'`
+mm_name=`echo 'cat /ManagementModule/Name' | xmllint --shell  ManagementModule.xml | tr '\n' ' ' | sed -r "s#.+<Name>(.+)</Name>.+#\1#"`
 
 echo "Analyzing $mm_name ($mm) ..."
 
@@ -32,17 +37,21 @@ echo "Analyzing $mm_name ($mm) ..."
 # line 6: extract action for alert with only danger alerts
 # line 7: replace action list xml with just MM/ActionName
 # line 8: truncate spaces
-# line 9: remove MM name if alert and action are from the same MM
+# line 9: remove space before comma
+# line 10: replace '" "' with ',' in list of actions (more than one action defined)
+# line 11: remove MM name if alert and action are from the same MM
 
 echo 'cat /ManagementModule/DataGroups/DataGroup/AlertBase' | xmllint --shell  ManagementModule.xml| \
   tr '\n' ' ' | sed 's/\-\-\-\-\-\-\-/\n/g' | \
   grep ActionID | \
-  sed -E "s/^.+\<Name\>(.+)\<\/Name\>.+\<CautionActionList\>(.+)\<\/CautionActionList\>.+\<DangerActionList\>(.+)\<\/DangerActionList\>.+/$mm,$mm_name,\1,\2,\3/g" | \
-  sed -E "s/^.+\<Name\>(.+)\<\/Name\>.+\<DangerActionList\>(.+)\<\/DangerActionList\>.+/$mm,$mm_name,\1,,\2/g" | \
-  sed -E "s/^.+\<Name\>(.+)\<\/Name\>.+\<CautionActionList\>(.+)\<\/CautionActionLiqst\>.+/$mm,$mm_name,\1,\2,/g" | \
-  sed -E 's/[[:space:]]*\<ActionID\>[[:space:]]*\<ManagementModuleName\>([^\<]+)\<\/ManagementModuleName\>[[:space:]]*\<ConstructName\>([^\<]+)\<\/ConstructName\>[[:space:]]*\<\/ActionID\>[[:space:]]*/\"\1\/\2\" /g' | \
-  sed -E 's/[[:space:]]+/ /g' | \
-  sed -E "s/$mm_name\///g" \
+  sed -r "s/^.+<Name>(.+)<\/Name>.+<CautionActionList>(.+)<\/CautionActionList>.+<DangerActionList>(.+)<\/DangerActionList>.+/\"$mm\",\"$mm_name\",\"\1\",\2,\3/g" | \
+  sed -r "s/^.+<Name>(.+)<\/Name>.+<DangerActionList>(.+)<\/DangerActionList>.+/\"$mm\",\"$mm_name\",\"\1\",,\2/g" | \
+  sed -r "s/^.+<Name>(.+)<\/Name>.+<CautionActionList>(.+)<\/CautionActionList>.+/\"$mm\",\"$mm_name\",\"\1\",\2,/g" | \
+  sed -r 's/[[:space:]]*<ActionID>[[:space:]]*<ManagementModuleName>([^<]+)<\/ManagementModuleName>[[:space:]]*<ConstructName>([^<]+)<\/ConstructName>[[:space:]]*<\/ActionID>[[:space:]]*/\"\1\/\2\" /g' | \
+  sed -r 's/[[:space:]]+/ /g' | \
+  sed -r 's/[[:space:]]+,/,/g' | \
+  sed -r 's/\"[[:space:]]+\"/,/g' | \
+  sed -r "s/$mm_name\///g" \
   >> alert_actions.csv
 
 rm -f ManagementModule.xml
