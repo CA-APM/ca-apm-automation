@@ -2,7 +2,7 @@
 
 # use environment.properties or set EM_PATH directly
 #source ./environment.properties
-EM_PATH=./tmp
+EM_PATH=~/work/Introscope
 
 # are there MM for domains?
 if [ -z `find ${EM_PATH}/config/modules/* -type d` ]
@@ -12,7 +12,7 @@ else
     FILES="${EM_PATH}/config/modules/*.jar ${EM_PATH}/config/modules/*/*.jar"
 fi
 
-echo "Management Module jar,Management Module Name,Alert Name,Caution Action List,Danger Action List" > alert_actions.csv
+echo "Management Module jar,Management Module Name,Alert Name,Active,Caution Action List,Danger Action List" > alert_actions.csv
 
 echo "Examining files in $FILES:"
 ls $FILES
@@ -44,9 +44,9 @@ do
   echo 'cat /ManagementModule/DataGroups/DataGroup/AlertBase' | xmllint --shell  ManagementModule.xml| \
     tr '\n' ' ' | sed 's/\-\-\-\-\-\-\-/\n/g' | \
     grep ActionID | \
-    sed -r "s/^.+<Name>(.+)<\/Name>.+<CautionActionList>(.+)<\/CautionActionList>.+<DangerActionList>(.+)<\/DangerActionList>.+/\"$mm\",\"$mm_name\",\"\1\",\2,\3/g" | \
-    sed -r "s/^.+<Name>(.+)<\/Name>.+<DangerActionList>(.+)<\/DangerActionList>.+/\"$mm\",\"$mm_name\",\"\1\",,\2/g" | \
-    sed -r "s/^.+<Name>(.+)<\/Name>.+<CautionActionList>(.+)<\/CautionActionList>.+/\"$mm\",\"$mm_name\",\"\1\",\2,/g" | \
+    sed -r "s/^.+IsActive=\"([truefals]+)\".+<Name>(.+)<\/Name>.+<CautionActionList>(.+)<\/CautionActionList>.+<DangerActionList>(.+)<\/DangerActionList>.+/\"$mm\",\"$mm_name\",\"\2\",\1,\3,\4/g" | \
+    sed -r "s/^.+IsActive=\"([truefals]+)\".+<Name>(.+)<\/Name>.+<DangerActionList>(.+)<\/DangerActionList>.+/\"$mm\",\"$mm_name\",\"\2\",\1,,\3/g" | \
+    sed -r "s/^.+IsActive=\"([truefals]+)\".+<Name>(.+)<\/Name>.+<CautionActionList>(.+)<\/CautionActionList>.+/\"$mm\",\"$mm_name\",\"\2\",\1,\3,/g" | \
     sed -r 's/[[:space:]]*<ActionID>[[:space:]]*<ManagementModuleName>([^<]+)<\/ManagementModuleName>[[:space:]]*<ConstructName>([^<]+)<\/ConstructName>[[:space:]]*<\/ActionID>[[:space:]]*/\"\1\/\2\" /g' | \
     sed -r 's/[[:space:]]+/ /g' | \
     sed -r 's/[[:space:]]+,/,/g' | \
